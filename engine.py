@@ -1,4 +1,5 @@
 import math
+
 class Value:
     # 需要记录一些计算图
     def __init__(self, data, _children=(), _op='', label=''):

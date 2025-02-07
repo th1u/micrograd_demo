@@ -4,9 +4,16 @@ import matplotlib.pyplot as plt
 import random
 from engine import Value
 
-
+# 梯度清零
+class Module:
+    # 梯度清零
+    def zero_grad(self):
+        for p in self.parameters():
+            p.grad = 0.0
+    def parameters():
+        return []
 # 构建MLP
-class Neuron():
+class Neuron(Module):
 
     def __init__(self, nin):
         self.w = [Value(random.uniform(-1, 1)) for _ in range(nin)]
@@ -18,7 +25,7 @@ class Neuron():
         return act.tanh()
     def parameters(self):
         return self.w + [self.b]
-class Layer():
+class Layer(Module):
 
     def __init__(self, nin, nout):
         self.neurons = [Neuron(nin) for _ in range(nout)]
@@ -27,7 +34,7 @@ class Layer():
         return outputs[0] if len(outputs) == 1 else outputs
     def parameters(self):
         return [p for neuron in self.neurons for p in neuron.parameters()]
-class MLP():
+class MLP(Module):
 
     def __init__(self, nin, nouts):
         sz = [nin] + nouts
@@ -55,8 +62,9 @@ def train(net, epoches, learning_rate):
         ypred = [net(x) for x in xs]
         loss = sum((yout - ygt)**2 for ygt, yout in zip(ys, ypred))
         # zero_grad
-        for p in net.parameters():
-            p.grad = 0.0
+        # for p in net.parameters():
+        #     p.grad = 0.0
+        net.zero_grad()
         # backward
         loss.backward()
         # update
